@@ -2,6 +2,12 @@ const {DataTypes} = require("sequelize");
 const db = require('../db');
 
 const Tab = db.define('tab', {
+    id: {
+        type: DataTypes.UUID,
+        primaryKey: true,
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
+      },
     title: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -15,12 +21,12 @@ const Tab = db.define('tab', {
         allowNull: false
     },
     likes: {
-        type: DataTypes.NUMBER,
-        allowNull: true
+        type: DataTypes.INTEGER,
+        defaultValue: 0
     },
     dislikes: {
-        type: DataTypes.NUMBER,
-        allowNull: true
+        type: DataTypes.INTEGER,
+        defaultValue: 0
     }
 });
 
