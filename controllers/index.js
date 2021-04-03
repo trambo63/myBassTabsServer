@@ -1,3 +1,5 @@
 module.exports = {
-    usercontroller: require('./usercontroller')
+    usercontroller: require('./usercontroller'),
+    tabcontroller: require('./tabcontroller'),
+    commentcontroller: require('./commentcontroller')
 }

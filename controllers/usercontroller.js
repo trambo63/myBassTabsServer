@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const {UserModel} = require('../models');
+const {models} = require('../models');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { UniqueConstraintError } = require('sequelize/lib/errors');
@@ -7,7 +7,7 @@ const { UniqueConstraintError } = require('sequelize/lib/errors');
 router.post('/register', async (req, res) => {
     const {userName, email, password} = req.body.user;
     try {
-        await UserModel.create({
+        await models.UserModel.create({
             userName: userName,
             email: email,
             password: bcrypt.hashSync(password, 10)
@@ -38,7 +38,7 @@ router.post('/login', async (req, res) => {
     const { userName, password } = req.body.user
 
     try{
-        await UserModel.findOne ({
+        await models.UserModel.findOne ({
             where: {
                 userName: userName
             }
@@ -70,6 +70,31 @@ router.post('/login', async (req, res) => {
             error: 'server does not support this'
         })
     }
+})
+
+router.get('/userdata', async (req, res) => {
+    try{
+        await models.UserModel.findAll({
+            include: [
+                {
+                    model: models.TabModel,
+                    include: [
+                        {
+                            model: models.CommentModel
+                        }
+                    ]
+                }
+            ]
+        }).then(users => {
+            res.status(200).json({
+                user: users
+            });
+        })
+    } catch (err) {
+        res.status(500).json({
+            error: `Failed to retrieve users: ${err}`
+        });
+    };
 })
 
 module.exports = router;

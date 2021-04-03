@@ -12,6 +12,8 @@ app.use(Express.json());
 const controllers = require('./controllers');
 
 app.use('/user', controllers.usercontroller)
+app.use('/tab', controllers.tabcontroller)
+app.use('/comment', controllers.commentcontroller)
 
 dbConnection.authenticate()
     .then(() => dbConnection.sync(/*{force: true}*/))
