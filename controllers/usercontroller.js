@@ -73,21 +73,26 @@ router.post('/login', async (req, res) => {
 })
 
 router.get('/userdata', async (req, res) => {
-    const {userName} = req.body.user
     try{
-        await models.UserModel.findOne({
-            where: {
-                userName: userName
-            }
-        })
-        .then(user => {
+        await models.UserModel.findAll({
+            include: [
+                {
+                    model: models.TabModel,
+                    include: [
+                        {
+                            model: models.CommentModel
+                        }
+                    ]
+                }
+            ]
+        }).then(users => {
             res.status(200).json({
-                user: user
+                user: users
             });
         })
     } catch (err) {
         res.status(500).json({
-            error: `Failed to retrieve user: ${err}`
+            error: `Failed to retrieve users: ${err}`
         });
     };
 })

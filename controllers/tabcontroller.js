@@ -27,4 +27,47 @@ router.post('/postTab', validateSession, upload.single('image'), async (req, res
     };
 });
 
+router.get('/:title', async (req, res) => {
+    try{
+        await models.TabModel.findAll({
+            where: {
+                title: req.params.title
+            }
+        }).then(tabs => {
+            res.status(200).json({
+                tabs: tabs,
+                message: 'tabs retrived'
+            })
+        })
+    }catch (err) {
+        res.status(500).json({
+            message: `Failed to retrive tabs: ${err}`
+        })
+    }
+});
+
+router.put('/:id', validateSession, upload.single('image'), async (req, res) => {
+    const {title, difficulty} = req.body;
+    try{
+        await models.TabModel.update({
+            title: title,
+            imgUrl: req.file.location,
+            difficulty: difficulty
+        }, {
+            where: {
+                id: req.params.id
+            }
+        }).then(tab => {
+            res.status(200).json({
+                tab: tab,
+                message: "tab updated"
+            })
+        })
+    }catch(err) {
+        res.status(500).json({
+            message: `Failed to update tab: ${err}`,
+        })
+    }
+})
+
 module.exports = router;
