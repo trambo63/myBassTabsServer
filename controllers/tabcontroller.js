@@ -22,7 +22,7 @@ router.post('/postTab', validateSession, upload.single('image'), async (req, res
         })
     } catch (err) {
         res.status(500).json({
-            error: `Failed to create tab ${err}`
+            error: `Failed to create tab Friend!: ${err}`
         });
     };
 });
@@ -41,7 +41,7 @@ router.get('/:title', async (req, res) => {
         })
     }catch (err) {
         res.status(500).json({
-            message: `Failed to retrive tabs: ${err}`
+            message: `Failed to retrive tabs Guy!: ${err}`
         })
     }
 });
@@ -65,9 +65,26 @@ router.put('/:id', validateSession, upload.single('image'), async (req, res) => 
         })
     }catch(err) {
         res.status(500).json({
-            message: `Failed to update tab: ${err}`,
+            message: `Failed to update tab Buddy!: ${err}`,
         })
     }
-})
+});
+
+router.delete('/:id', validateSession, async (req, res) => {
+    try{
+        await models.TabModel.destroy({
+            where: {
+                id: req.params.id
+            }
+        })
+        res.status(200).json({
+            message: "Tab Destroyed"
+        })
+    } catch (err) {
+        res.status(500).json({
+            message: `Unable to Destroy Tab Friend!: ${err}`
+        })
+    }
+});
 
 module.exports = router;
