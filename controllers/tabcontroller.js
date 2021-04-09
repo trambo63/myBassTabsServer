@@ -5,7 +5,7 @@ const upload = require('../services/file-upload')
 
 
 router.post('/postTab', validateSession, upload.single('image'), async (req, res) => {
-    const {title, difficulty} = req.body.tab;
+    const {title, difficulty} = req.body;
 
     try {
         await models.TabModel.create({
@@ -27,6 +27,22 @@ router.post('/postTab', validateSession, upload.single('image'), async (req, res
     };
 });
 
+router.get('/allTabs', async (req, res) => {
+    try{
+        await models.TabModel.findAll()
+        .then(tabs => {
+            res.status(200).json({
+                tabs: tabs,
+                message: "Tabs retrived!"
+            })
+        })
+    }catch (err) {
+        res.status(500).json({
+            message: `Failed to retrive tabs Friend!: ${err}`
+        })
+    }
+})
+
 router.get('/:title', async (req, res) => {
     try{
         await models.TabModel.findAll({
@@ -47,7 +63,7 @@ router.get('/:title', async (req, res) => {
 });
 
 router.put('/:id', validateSession, upload.single('image'), async (req, res) => {
-    const {title, difficulty} = req.body.tab;
+    const {title, difficulty} = req.body;
     try{
         await models.TabModel.update({
             title: title,

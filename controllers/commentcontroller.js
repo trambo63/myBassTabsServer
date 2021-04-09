@@ -2,6 +2,25 @@ const router = require('express').Router();
 const { validateSession } = require('../middleware');
 const {models} = require('../models');
 
+router.get('/:id', async (req, res) => {
+    try{
+        await models.CommentModel.findAll({
+            where: {
+                tabId: req.params.id
+            }
+        }).then(comment => {
+            res.status(200).json({
+                comment: comment,
+                message: 'comments retreived'
+            })
+        })
+    }catch (err) {
+        res.status(500).json({
+            error: `Failed to retrive comment: ${err}`
+        })
+    }
+})
+
 router.post('/postComment', validateSession, async (req, res) => {
     const {comment, tabId} = req.body.comment;
 
