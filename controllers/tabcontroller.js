@@ -1,17 +1,27 @@
 const router = require('express').Router();
 const {models} = require('../models');
 const { validateSession } = require('../middleware');
-const upload = require('../services/file-upload')
+// const upload = require('../services/file-upload');
+const multer = require('multer');
+const fs = require('fs');
+const upload = multer({dest: "./uploads"});
 
 
 router.post('/postTab', validateSession, upload.single('image'), async (req, res) => {
+    // let fileType = req.file.type.split("/")[1]
+    // let newFileName = req.file.name + "." + fileType
+
+    // fs.rename(`./uploads/${req.file.name}`, `./uploads/${newFileName}`, () => {
+    //     console.log('callback');
+    // })
+    
     const {title, difficulty} = req.body;
 
     try {
         await models.TabModel.create({
             title: title,
             difficulty: difficulty,
-            imgUrl: req.file.location,
+            // imgUrl: newFileName,
             userId: req.user.id
         })
         .then(tab => {
@@ -27,6 +37,22 @@ router.post('/postTab', validateSession, upload.single('image'), async (req, res
     };
 });
 
+router.get('/allTabs', async (req, res) => {
+    try{
+        await models.TabModel.findAll()
+        .then(tabs => {
+            res.status(200).json({
+                tabs: tabs,
+                message: "Tabs retrived!"
+            })
+        })
+    }catch (err) {
+        res.status(500).json({
+            message: `Failed to retrive tabs Friend!: ${err}`
+        })
+    }
+})
+
 router.get('/:title', async (req, res) => {
     try{
         await models.TabModel.findAll({
@@ -35,7 +61,7 @@ router.get('/:title', async (req, res) => {
             }
         }).then(tabs => {
             res.status(200).json({
-                tabs: tabs,
+                tab: tabs,
                 message: 'tabs retrived'
             })
         })
@@ -51,7 +77,7 @@ router.put('/:id', validateSession, upload.single('image'), async (req, res) => 
     try{
         await models.TabModel.update({
             title: title,
-            imgUrl: req.file.location,
+            // imgUrl: req.file.location,
             difficulty: difficulty
         }, {
             where: {
