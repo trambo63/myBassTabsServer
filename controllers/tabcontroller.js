@@ -1,17 +1,27 @@
 const router = require('express').Router();
 const {models} = require('../models');
 const { validateSession } = require('../middleware');
-const upload = require('../services/file-upload')
+// const upload = require('../services/file-upload');
+const multer = require('multer');
+const fs = require('fs');
+const upload = multer({dest: "./uploads"});
 
 
 router.post('/postTab', validateSession, upload.single('image'), async (req, res) => {
+    let fileType = req.file.mimetype.split("/")[1]
+    let newFileName = req.file.filename + "." + fileType
+
+    fs.rename(`./uploads/${req.file.filename}`, `./uploads/${newFileName}`, () => {
+        console.log('callback');
+    })
+    
     const {title, difficulty} = req.body;
 
     try {
         await models.TabModel.create({
             title: title,
             difficulty: difficulty,
-            imgUrl: req.file.location,
+            imgUrl: newFileName,
             userId: req.user.id
         })
         .then(tab => {

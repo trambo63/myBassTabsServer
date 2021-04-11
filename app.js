@@ -8,6 +8,7 @@ const app = Express();
 
 app.use(middleware.CORS);
 app.use(Express.json());
+app.use('/static', Express.static('uploads'));
 
 const controllers = require('./controllers');
 
