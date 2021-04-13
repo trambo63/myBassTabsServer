@@ -20,6 +20,11 @@ const User = db.define('user', {
         type: DataTypes.STRING,
         allowNull: false, 
     },
+    role: {
+        type: DataTypes.ENUM('user', 'admin'),
+        defaultValue: 'user',
+        allowNull: false
+    }
 });
 
 module.exports = User;

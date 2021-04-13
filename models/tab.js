@@ -12,22 +12,22 @@ const Tab = db.define('tab', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    // imgUrl: {
-    //     type: DataTypes.STRING,
-    //     allowNull: false
-    // },
+    imgUrl: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
     difficulty: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    // likes: {
-    //     type: DataTypes.INTEGER,
-    //     defaultValue: 0
-    // },
-    // dislikes: {
-    //     type: DataTypes.INTEGER,
-    //     defaultValue: 0
-    // }
+    likes: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+    },
+    dislikes: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+    }
 });
 
 module.exports = Tab;

@@ -8,12 +8,12 @@ const upload = multer({dest: "./uploads"});
 
 
 router.post('/postTab', validateSession, upload.single('image'), async (req, res) => {
-    // let fileType = req.file.type.split("/")[1]
-    // let newFileName = req.file.name + "." + fileType
+    let fileType = req.file.mimetype.split("/")[1]
+    let newFileName = req.file.filename + "." + fileType
 
-    // fs.rename(`./uploads/${req.file.name}`, `./uploads/${newFileName}`, () => {
-    //     console.log('callback');
-    // })
+    fs.rename(`./uploads/${req.file.filename}`, `./uploads/${newFileName}`, () => {
+        console.log('callback');
+    })
     
     const {title, difficulty} = req.body;
 
@@ -21,7 +21,7 @@ router.post('/postTab', validateSession, upload.single('image'), async (req, res
         await models.TabModel.create({
             title: title,
             difficulty: difficulty,
-            // imgUrl: newFileName,
+            imgUrl: newFileName,
             userId: req.user.id
         })
         .then(tab => {
@@ -73,11 +73,17 @@ router.get('/:title', async (req, res) => {
 });
 
 router.put('/:id', validateSession, upload.single('image'), async (req, res) => {
+    let fileType = req.file.mimetype.split("/")[1]
+    let newFileName = req.file.filename + "." + fileType
+
+    fs.rename(`./uploads/${req.file.filename}`, `./uploads/${newFileName}`, () => {
+        console.log('callback');
+    })
     const {title, difficulty} = req.body;
     try{
         await models.TabModel.update({
             title: title,
-            // imgUrl: req.file.location,
+            imgUrl: newFileName,
             difficulty: difficulty
         }, {
             where: {
