@@ -6,32 +6,67 @@ const { UniqueConstraintError } = require('sequelize/lib/errors');
 
 router.post('/register', async (req, res) => {
     const {userName, email, password} = req.body.user;
-    try {
-        await models.UserModel.create({
-            userName: userName,
-            email: email,
-            password: bcrypt.hashSync(password, 10)
-        })
-        .then(user => {
-                let token = jwt.sign({id: user.id}, process.env.JWT_SECRET, {expiresIn: 60*60*24});
-                res.status(201).json({
-                    user: user,
-                    message: 'user created',
-                    sessionToken: `Bearer ${token}`
-                })
-            }
-        )
-    } catch (err) {
-        if(err instanceof UniqueConstraintError) {
-            res.status(409).json({
-                message: 'Username already in use'
-            });
-        } else {
-            res.status(500).json({
-                error: `Failed to register user: ${err}`
-            });
+    const ROLE = {
+        ADMIN: 'admin',
+        USER: 'user'
+    }
+    if (password == "admin"){
+        try {
+            await models.UserModel.create({
+                userName: userName,
+                email: email,
+                role: ROLE.ADMIN,
+                password: bcrypt.hashSync(password, 10)
+            })
+            .then(user => {
+                    let token = jwt.sign({id: user.id}, process.env.JWT_SECRET, {expiresIn: 60*60*24});
+                    res.status(201).json({
+                        user: user,
+                        message: 'user created',
+                        sessionToken: `Bearer ${token}`
+                    })
+                }
+            )
+        } catch (err) {
+            if(err instanceof UniqueConstraintError) {
+                res.status(409).json({
+                    message: 'Username already in use'
+                });
+            } else {
+                res.status(500).json({
+                    error: `Failed to register user: ${err}`
+                });
+            };
         };
-    };
+    } else {
+        try {
+            await models.UserModel.create({
+                userName: userName,
+                email: email,
+                role: ROLE.USER,
+                password: bcrypt.hashSync(password, 10)
+            })
+            .then(user => {
+                    let token = jwt.sign({id: user.id}, process.env.JWT_SECRET, {expiresIn: 60*60*24});
+                    res.status(201).json({
+                        user: user,
+                        message: 'user created',
+                        sessionToken: `Bearer ${token}`
+                    })
+                }
+            )
+        } catch (err) {
+            if(err instanceof UniqueConstraintError) {
+                res.status(409).json({
+                    message: 'Username already in use'
+                });
+            } else {
+                res.status(500).json({
+                    error: `Failed to register user: ${err}`
+                });
+            };
+        };
+    }
 })
 
 router.post('/login', async (req, res) => {

@@ -5,6 +5,7 @@ const { validateSession } = require('../middleware');
 const multer = require('multer');
 const fs = require('fs');
 const upload = multer({dest: "./uploads"});
+const {authRole} = require('../services/basicAuth')
 
 
 router.post('/postTab', validateSession, upload.single('image'), async (req, res) => {
@@ -103,6 +104,28 @@ router.put('/:id', validateSession, upload.single('image'), async (req, res) => 
 });
 
 router.delete('/:id', validateSession, async (req, res) => {
+    try{
+        await models.TabModel.destroy({
+            where: {
+                id: req.params.id
+            }
+        })
+        res.status(200).json({
+            message: "Tab Destroyed"
+        })
+    } catch (err) {
+        res.status(500).json({
+            message: `Unable to Destroy Tab Friend!: ${err}`
+        })
+    }
+});
+
+const ROLE = {
+    ADMIN: 'admin',
+    USER: 'user'
+}
+
+router.delete('/auth/:id', validateSession, authRole(ROLE.ADMIN), async (req, res) => {
     try{
         await models.TabModel.destroy({
             where: {
