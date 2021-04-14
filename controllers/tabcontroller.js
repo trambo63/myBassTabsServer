@@ -73,6 +73,50 @@ router.get('/:title', async (req, res) => {
     }
 });
 
+router.put ('/like/:id', validateSession, async (req, res) => {
+    const {likes} = req.body;
+    try{
+        await models.TabModel.update({
+            likes: likes,
+        }, {
+            where: {
+                id: req.params.id
+            }
+        }).then(tab => {
+            res.status(200).json({
+                tab: tab,
+                message: "tab updated"
+            })
+        })
+    }catch(err) {
+        res.status(500).json({
+            message: `Failed to update tab Buddy!: ${err}`,
+        })
+    }
+})
+
+router.put ('/dislike/:id', validateSession, async (req, res) => {
+    const {dislikes} = req.body;
+    try{
+        await models.TabModel.update({
+            dislikes: dislikes,
+        }, {
+            where: {
+                id: req.params.id
+            }
+        }).then(tab => {
+            res.status(200).json({
+                tab: tab,
+                message: "tab updated"
+            })
+        })
+    }catch(err) {
+        res.status(500).json({
+            message: `Failed to update tab Buddy!: ${err}`,
+        })
+    }
+})
+
 router.put('/:id', validateSession, upload.single('image'), async (req, res) => {
     let fileType = req.file.mimetype.split("/")[1]
     let newFileName = req.file.filename + "." + fileType
